@@ -1,0 +1,27 @@
+{
+  "name": "quickdraw-api",
+  "version": "1.0.0",
+  "description": "API used for the Quickdraw game",
+  "main": "server.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^14.2.0",
+    "express": "^4.18.2",
+    "mariadb": "^2.5.5",
+    "nodemon": "^2.0.20"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GhostlySpook/quickdraw-api.git"
+  },
+  "author": "Ghostly Spook",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GhostlySpook/quickdraw-api/issues"
+  },
+  "homepage": "https://github.com/GhostlySpook/quickdraw-api#readme"
+}
