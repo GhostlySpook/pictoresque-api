@@ -2,7 +2,7 @@ pool = require("../db.js");
 
 let message_list = [];
 let messageId = 0;
-let message_limit = 6;
+let message_limit = 4;
 let drawing_width_limit = 1100;
 let drawing_height_limit = 800;
 let message_length_limit = 128;
