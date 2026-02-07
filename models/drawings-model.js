@@ -18,8 +18,10 @@ const Drawings = {
 
         this.validate(message);
 
+        console.log("Current list length:", message_list.length)
+
         if(message_list.length >= message_limit){
-          message_list.shift();
+          message_list.splice(0, 1);
         }
 
         message.id = messageId++;
