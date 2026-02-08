@@ -1,8 +1,10 @@
 pool = require("../db.js");
+const fs = require('node:fs');
+const { DefaultAzureCredential } = require('@azure/identity');
 
 let message_list = [];
 let messageId = 0;
-let message_limit = 4;
+let message_limit = 20;
 let drawing_width_limit = 1100;
 let drawing_height_limit = 800;
 let message_length_limit = 128;
@@ -11,14 +13,24 @@ let avatar_length_limit = 9 ** 2;
 
 const Drawings = {
 
-    async add(message){
-      try{ 
-        //console.log("Received message:");
-        //console.log(message);
+    async add(request){
+      try{
+        message = {
+          avatar: JSON.parse(request.body.avatar),
+          path: null,
+          width: Number(request.body.width),
+          height: Number(request.body.height),
+          colorSpace: request.body.colorSpace,
+          textMessage: request.body.textMessage,
+          username: request.body.username,
+          id: null
+        };
 
         this.validate(message);
 
-        console.log("Current list length:", message_list.length)
+        if(request.file != undefined){
+          message.path = "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/14235/production/_100058428_mediaitem100058424.jpg"
+        }
 
         if(message_list.length >= message_limit){
           message_list.splice(0, 1);
@@ -27,16 +39,6 @@ const Drawings = {
         message.id = messageId++;
 
         message_list.push(message);
-
-        /*this.validate(drawing);
-        
-        if(message_list.length >= message_limit){
-          message_list.shift();
-        }
-
-        drawing.id = messageId++;
-
-        message_list.push(drawing);*/
       }catch (error) {
         console.log(error)
         return error;
