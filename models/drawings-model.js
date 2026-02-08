@@ -1,6 +1,6 @@
 pool = require("../db.js");
-const fs = require('node:fs');
-const { DefaultAzureCredential } = require('@azure/identity');
+//const fs = require('node:fs');
+const azureStorage = require('../services/azure-storage.js');
 
 let message_list = [];
 let messageId = 0;
@@ -28,8 +28,11 @@ const Drawings = {
 
         this.validate(message);
 
-        if(request.file != undefined){
-          message.path = "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/14235/production/_100058428_mediaitem100058424.jpg"
+        if(request.file != undefined && await azureStorage.countImages() <= 20){
+          message.path = await azureStorage.uploadImage(
+              request.file.buffer,
+              messageId.toString() + ".jpeg"
+          );
         }
 
         if(message_list.length >= message_limit){
