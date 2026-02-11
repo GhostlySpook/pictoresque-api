@@ -1,6 +1,7 @@
 dbConfig = require("../db.js");
 const sql = require('mssql');
 const crypto = require('crypto');
+global.crypto = crypto;
 //const fs = require('node:fs');
 const azureStorage = require('../services/azure-storage.js');
 

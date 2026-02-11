@@ -4,9 +4,7 @@ const Drawings = require('../models/drawings-model.js');
 // Reaction function for get reaction route
 const newMessage = (req, res, next) => {
     try {
-        console.log("New Message!")
         Drawings.add(req);
-        console.log("Added drawing");
         res.json({message: "Save successful"});
     } catch (error) {
         console.log("Exception: " + error);
