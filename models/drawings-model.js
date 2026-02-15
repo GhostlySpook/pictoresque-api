@@ -138,39 +138,34 @@ const Drawings = {
     },
 
     validate(message){
-      try {
-        //Check drawing data is correct
-        if(message == null){
-          throw("Drawing is null");
-        }
+      //Check drawing data is correct
+      if(message == null){
+        throw("Drawing is null");
+      }
 
-        if(typeof message.width != "number" || typeof message.height != "number" || message.text_message != "string"){
-          throw("Type of field isn't correct");
-        }
+      if(typeof message.width != "number" || typeof message.height != "number" || message.text_message != "string"){
+        throw("Type of field isn't correct");
+      }
 
-        //Check the drawing received isn't too big
-        if(message.width > drawing_width_limit || message.height > drawing_height_limit){
-          throw("Drawing size is too big");
-        }
+      //Check the drawing received isn't too big
+      if(message.width > drawing_width_limit || message.height > drawing_height_limit){
+        throw("Drawing size is too big");
+      }
 
-        //Check text message isn't too big
-        if(message.textMessage > message_length_limit){
-          throw("Text message is too long");
-        }
+      //Check text message isn't too big
+      if(message.textMessage > message_length_limit){
+        throw("Text message is too long");
+      }
 
-        //Check text message isn't too big
-        if(message.username > username_length_limit){
-          throw("Username is too long");
-        }
+      //Check text message isn't too big
+      if(message.username > username_length_limit){
+        throw("Username is too long");
+      }
 
-        if(message.avatar.length > avatar_length_limit)
-          throw("Avatar data is too big");
+      if(message.avatar.length > avatar_length_limit)
+        throw("Avatar data is too big");
 
         //TODO Check that avatar data within all is string and doesn't go over the limit of characters
-
-      } catch (error) {
-        return error;
-      }
     }
   
 }; 
