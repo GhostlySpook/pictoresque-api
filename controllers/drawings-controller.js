@@ -25,7 +25,6 @@ const getAllMessages = async (req, res, next) => {
 const getMessagesPastId = async (req, res, next) => {
     try{
         let response = await Drawings.getPastId(req.params.messageId);
-        //console.log("Controller from Id length:", message_list.length);
         return res.json(response);
     }
     catch(error){

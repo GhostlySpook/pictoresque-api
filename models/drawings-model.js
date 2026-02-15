@@ -30,6 +30,9 @@ const Drawings = {
 
         this.validate(message);
 
+        message.width = Number(message.width)
+        message.height = Number(message.height)
+
         if(req.file != undefined && await azureStorage.countImages() <= 20){
           message.path = await azureStorage.uploadImage(
               req.file.buffer,
@@ -58,6 +61,8 @@ const Drawings = {
 
         const result = await request.execute("SaveMessage")
 
+        await sql.close()
+
         console.log(result);
 
         //message.id = messageId++;
@@ -78,6 +83,8 @@ const Drawings = {
 
         const result = await sql.query("SELECT * FROM [dbo].[user-messages]")
 
+        await sql.close()
+
         //return message_list;
         return result;
       } catch (error){
@@ -96,6 +103,8 @@ const Drawings = {
         request.input('id', sql.Int, lastMessageId);
 
         const result = await request.query("SELECT * FROM [dbo].[user-messages] WHERE message_id > @id")
+
+        await sql.close()
 
         return result
       } catch (error) {
