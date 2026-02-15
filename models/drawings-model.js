@@ -115,6 +115,7 @@ const Drawings = {
     async getPastId(lastMessageId){
       try {
         if(lastMessageId >= lastKnownId){
+          console.log("Client asking is already updated");
           return
         }
 
@@ -129,6 +130,8 @@ const Drawings = {
         const result = await request.query("SELECT * FROM [dbo].[user-messages] WHERE message_id > @id")
 
         await sql.close()
+
+        console.log("Closing connection");
 
         return result
       } catch (error) {
