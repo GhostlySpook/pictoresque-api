@@ -1,4 +1,4 @@
-dbConfig = require("../db.js");
+const dbConfig = require("../db.js");
 const sql = require('mssql');
 const crypto = require('crypto');
 global.crypto = crypto;
@@ -6,13 +6,29 @@ global.crypto = crypto;
 const azureStorage = require('../services/azure-storage.js');
 
 let message_list = [];
-let messageId = 0;
+let lastKnownId = 0;
 let message_limit = 20;
 let drawing_width_limit = 1100;
 let drawing_height_limit = 800;
 let message_length_limit = 128;
 let username_length_limit = 16;
 let avatar_length_limit = 811;
+
+async function getLastId(){
+  try{
+    //Get last message ID on wakeup
+    await sql.connect(dbConfig);
+    let last_row = await sql.query("SELECT max(message_id) as message_id FROM [dbo].[user-messages]")
+    lastKnownId = Number(last_row.recordset[0].message_id)
+    await sql.close();
+  }
+  catch(error){
+    console.log("Problem getting last id", error)
+    sql.close()
+  }
+}
+
+getLastId();
 
 const Drawings = {
 
@@ -65,6 +81,8 @@ const Drawings = {
 
         console.log(result);
 
+        getLastId();
+
         //message.id = messageId++;
 
         //message_list.push(message);
@@ -72,6 +90,7 @@ const Drawings = {
 
       }catch (error) {
         console.log(error)
+        sql.close()
         return error;
       }
     },
@@ -88,12 +107,17 @@ const Drawings = {
         //return message_list;
         return result;
       } catch (error){
+        sql.close()
         return error;
       }
     },
 
     async getPastId(lastMessageId){
       try {
+        if(lastMessageId >= lastKnownId){
+          return
+        }
+
         //return message_list.filter(message => message.id > lastMessageId);
         await sql.connect(dbConfig);
 
@@ -108,6 +132,7 @@ const Drawings = {
 
         return result
       } catch (error) {
+        sql.close()
         return error; 
       }
     },
