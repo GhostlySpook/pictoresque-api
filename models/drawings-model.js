@@ -146,7 +146,8 @@ const Drawings = {
         throw("Drawing is null");
       }
 
-      if(typeof message.width != "number" || typeof message.height != "number" || message.text_message != "string"){
+      if((message.path != null && (typeof message.width != "number" || typeof message.height != "number"))
+        || !(typeof message.text_message == "string" || message.text_message == null)){
         throw("Type of field isn't correct");
       }
 
