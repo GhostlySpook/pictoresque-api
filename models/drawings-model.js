@@ -13,14 +13,81 @@ let drawing_height_limit = 800;
 let message_length_limit = 128;
 let username_length_limit = 16;
 let avatar_length_limit = 811;
+let messages_in_memory = 20;
 
-async function getLastId(){
+async function getLastMessages(){
+  try{
+    //Get last 20 messages on wakeup
+    await sql.connect(dbConfig);
+    let received_message_list = await sql.query("SELECT * FROM (SELECT TOP " + messages_in_memory.toString() + " * FROM [dbo].[user-messages] ORDER BY message_id DESC) AS sub_query ORDER BY message_id ASC")
+    recordset = received_message_list.recordset;
+    await sql.close();
+
+    //Get the last known id
+    let length = recordset.length
+    lastKnownId = Number(recordset[length - 1].message_id)
+
+    //Fill message list
+    for(let i = 0; i < recordset.length; i++){
+      record = recordset[i];
+
+      let adding_width = null;
+      let adding_height = null;
+
+      if(record.width != null && record.height != null){
+        adding_width = Number(record.width)
+        adding_height = Number(record.height)
+      }
+
+      message_limit.push({
+        message_id: Number(record.message_id),
+        avatar: record.avatar,
+        path: record.path,
+        width: adding_width,
+        height: adding_height,
+        textMessage: record.textMessage,
+        username: record.username
+      });
+    }
+  }
+  catch(error){
+    console.log("Problem getting the last messages", error)
+    sql.close()
+  }
+}
+
+async function getLastMessage(){
   try{
     //Get last message ID on wakeup
     await sql.connect(dbConfig);
-    let last_row = await sql.query("SELECT max(message_id) as message_id FROM [dbo].[user-messages]")
-    lastKnownId = Number(last_row.recordset[0].message_id)
+    last_message = await sql.query("SELECT TOP 1 * FROM [dbo].[user-messages] ORDER BY message_id DESC")
     await sql.close();
+
+    let message_record = last_message.recordset[0];
+
+    let adding_width = null;
+    let adding_height = null;
+
+    if(message_record.width != null && message_record.height != null){
+      adding_width = Number(message_record.width)
+      adding_height = Number(message_record.height)
+    }
+
+    message_list.push({
+      message_id: message_record.message_id,
+      avatar: message_record.avatar,
+      path: message_record.path,
+      width: adding_width,
+      height: adding_height,
+      textMessage: message_record.textMessage,
+      username: message_record.username
+    });
+
+    lastKnownId = message_record.message_id;
+    
+    if(message_list.length > 20){
+      message_list.shift();
+    }
   }
   catch(error){
     console.log("Problem getting last id", error)
@@ -28,17 +95,39 @@ async function getLastId(){
   }
 }
 
-getLastId();
+/*async function getLastId(){
+  try{
+    //Get last message ID on wakeup
+    await sql.connect(dbConfig);
+    let last_row = await sql.query("SELECT max(message_id) as message_id FROM [dbo].[user-messages]")
+    await sql.close();
+    lastKnownId = Number(last_row.recordset[0].message_id)
+  }
+  catch(error){
+    console.log("Problem getting last id", error)
+    sql.close()
+  }
+}*/
+
+getLastMessages();
 
 const Drawings = {
 
     async add(req){
       try{
+        let adding_width = null;
+        let adding_height = null;
+
+        if(req.body.width != null && req.body.height != null){
+          adding_width = Number(message_record.width)
+          adding_height = Number(message_record.height)
+        }
+
         message = {
           avatar: req.body.avatar,
           path: null,
-          width: Number(req.body.width),
-          height: Number(req.body.height),
+          width: adding_width,
+          height: adding_height,
           textMessage: req.body.textMessage,
           username: req.body.username
           //id: null
@@ -46,21 +135,12 @@ const Drawings = {
 
         this.validate(message);
 
-        message.width = Number(message.width)
-        message.height = Number(message.height)
-
         if(req.file != undefined && await azureStorage.countImages() <= 20){
           message.path = await azureStorage.uploadImage(
               req.file.buffer,
               crypto.randomUUID() + ".jpeg"
           );
         }
-
-        /*if(message_list.length >= message_limit){
-          message_list.splice(0, 1);
-        }*/
-
-
 
         await sql.connect(dbConfig);
 
@@ -81,13 +161,7 @@ const Drawings = {
 
         console.log(result);
 
-        getLastId();
-
-        //message.id = messageId++;
-
-        //message_list.push(message);
-
-
+        await getLastMessage();
       }catch (error) {
         console.log(error)
         sql.close()
@@ -95,7 +169,16 @@ const Drawings = {
       }
     },
 
-    async getAll(){
+    getAll(){
+      try{
+        return message_list;
+      } catch (error){
+        sql.close()
+        return error;
+      }
+    },
+
+    async getAllSQL(){
       try{
         //console.log("drawings-model.js Drawing list length while getting all: ", message_list.length)
         await sql.connect(dbConfig);
@@ -112,7 +195,11 @@ const Drawings = {
       }
     },
 
-    async getPastId(lastMessageId){
+    getPastId(lastMessageId){
+      return message_list.filter(message => message.message_id > lastMessageId);
+    },
+
+    async getPastIdSQL(lastMessageId){
       try {
         if(lastMessageId >= lastKnownId){
           console.log("Client asking is already updated");

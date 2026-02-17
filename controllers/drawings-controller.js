@@ -13,7 +13,7 @@ const newMessage = (req, res, next) => {
 
 const getAllMessages = async (req, res, next) => {
     try{
-        message_list = await Drawings.getAll();
+        message_list = Drawings.getAll();
         console.log("Giving all", message_list.length);
         return res.json(message_list);
     }
@@ -24,7 +24,7 @@ const getAllMessages = async (req, res, next) => {
 
 const getMessagesPastId = async (req, res, next) => {
     try{
-        let response = await Drawings.getPastId(req.params.messageId);
+        let response = Drawings.getPastId(req.params.messageId);
         return res.json(response);
     }
     catch(error){
