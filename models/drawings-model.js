@@ -39,7 +39,7 @@ async function getLastMessages(){
         adding_height = Number(record.height)
       }
 
-      message_limit.push({
+      message_list.push({
         message_id: Number(record.message_id),
         avatar: record.avatar,
         path: record.path,
