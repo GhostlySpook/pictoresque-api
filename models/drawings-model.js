@@ -20,8 +20,8 @@ async function getLastMessages(){
     //Get last 20 messages on wakeup
     await sql.connect(dbConfig);
     let received_message_list = await sql.query("SELECT * FROM (SELECT TOP " + messages_in_memory.toString() + " * FROM [dbo].[user-messages] ORDER BY message_id DESC) AS sub_query ORDER BY message_id ASC")
-    recordset = received_message_list.recordset;
     await sql.close();
+    recordset = received_message_list.recordset;
 
     //Get the last known id
     let length = recordset.length
@@ -49,6 +49,8 @@ async function getLastMessages(){
         username: record.username
       });
     }
+
+    console.log("Got " + length.toString() + " messages")
   }
   catch(error){
     console.log("Problem getting the last messages", error)
@@ -171,6 +173,7 @@ const Drawings = {
 
     getAll(){
       try{
+        console.log("Sending all messages");
         return message_list;
       } catch (error){
         sql.close()
@@ -196,7 +199,13 @@ const Drawings = {
     },
 
     getPastId(lastMessageId){
-      return message_list.filter(message => message.message_id > lastMessageId);
+      try{
+        console.log("Sending messages after " + lastMessageId.toString())
+        return message_list.filter(message => message.message_id > lastMessageId);
+      }
+      catch(error){
+        return error
+      }
     },
 
     async getPastIdSQL(lastMessageId){
