@@ -121,8 +121,8 @@ const Drawings = {
         let adding_height = null;
 
         if(req.body.width != null && req.body.height != null){
-          adding_width = Number(message_record.width)
-          adding_height = Number(message_record.height)
+          adding_width = Number(req.body.width)
+          adding_height = Number(req.body.height)
         }
 
         message = {
