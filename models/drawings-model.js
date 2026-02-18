@@ -253,12 +253,12 @@ const Drawings = {
       }
 
       //Check text message isn't too big
-      if(message.textMessage > message_length_limit){
+      if(message.textMessage.length > message_length_limit){
         throw("Text message is too long");
       }
 
       //Check text message isn't too big
-      if(message.username > username_length_limit){
+      if(message.username.length > username_length_limit){
         throw("Username is too long");
       }
 
