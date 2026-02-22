@@ -7,12 +7,12 @@ const azureStorage = require('../services/azure-storage.js');
 
 let message_list = [];
 let lastKnownId = 0;
-let message_limit = 20;
 let drawing_width_limit = 1100;
 let drawing_height_limit = 800;
 let message_length_limit = 128;
 let username_length_limit = 16;
 let avatar_length_limit = 811;
+let hexRegex = /^#[A-f0-9]{6}$/;
 let messages_in_memory = 20;
 
 async function getLastMessages(){
@@ -265,7 +265,14 @@ const Drawings = {
       if(message.avatar.length > avatar_length_limit)
         throw("Avatar data is too big");
 
-        //TODO Check that avatar data within all is string and doesn't go over the limit of characters
+      let avatarListLength = message.avatar.length;
+      for(let i = 0; i < avatarListLength; i++){
+        let avatarColor = message.avatar[i];
+
+        if(!hexRegex.test(avatarColor)){
+          throw("Avatar color is invalid:", avatarColor)
+        }
+      }
     }
   
 }; 
