@@ -170,6 +170,7 @@ const Drawings = {
 
         console.log(result);
         console.log("Should have saved");
+        console.log("Message list length", message_list.length);
 
         await getLastMessage();
       }catch (error) {
