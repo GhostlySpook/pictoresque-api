@@ -137,7 +137,11 @@ const Drawings = {
           //id: null
         };
 
+        console.log("Message JSON", message);
+
         this.validate(message);
+
+        console.log("Validated");
 
         let numStorage = await azureStorage.countImages();
         console.log("Save items in storage:", numStorage)
