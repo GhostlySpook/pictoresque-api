@@ -117,6 +117,8 @@ const Drawings = {
 
     async add(req){
       try{
+        console.log("Starting saving drawing");
+
         let adding_width = null;
         let adding_height = null;
 
@@ -137,12 +139,17 @@ const Drawings = {
 
         this.validate(message);
 
-        if(req.file != undefined && await azureStorage.countImages() <= 20){
+        let numStorage = await azureStorage.countImages();
+        console.log("Save items in storage:", numStorage)
+
+        if(req.file != undefined && numStorage <= 20){
           message.path = await azureStorage.uploadImage(
               req.file.buffer,
               crypto.randomUUID() + ".jpeg"
           );
         }
+
+        console.log("File name:", message.path);
 
         await sql.connect(dbConfig);
 
@@ -162,6 +169,7 @@ const Drawings = {
         await sql.close()
 
         console.log(result);
+        console.log("Should have saved");
 
         await getLastMessage();
       }catch (error) {
