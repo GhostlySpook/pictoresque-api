@@ -250,6 +250,8 @@ const Drawings = {
     },
 
     validate(message){
+      console.log("Validation");
+
       //Check drawing data is correct
       if(message == null){
         throw("Drawing is null");
@@ -278,9 +280,10 @@ const Drawings = {
       if(message.avatar.length > avatar_length_limit)
         throw("Avatar data is too big");
 
-      let avatarListLength = message.avatar.length;
+      let avatarList = JSON.parse(message.avatar)
+      let avatarListLength = avatarList.length;
       for(let i = 0; i < avatarListLength; i++){
-        let avatarColor = message.avatar[i];
+        let avatarColor = avatarList[i];
 
         if(!hexRegex.test(avatarColor)){
           throw("Avatar color is invalid:", avatarColor)
