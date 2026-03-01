@@ -1,11 +1,14 @@
 const { type } = require('express/lib/response');
 const Drawings = require('../models/drawings-model.js');
+const rateLimits = require('../rate-limits.js');
 
 // Reaction function for get reaction route
 const newMessage = (req, res, next) => {
     try {
-        Drawings.add(req);
-        res.json({message: "Save successful"});
+        if(rateLimits.canSendMessage(req.body.uuid)){
+            //Drawings.add(req);
+            res.json({message: "Save successful"});
+        }
     } catch (error) {
         console.log("Exception: " + error);
     }
