@@ -6,7 +6,7 @@ const rateLimits = require('../rate-limits.js');
 const newMessage = (req, res, next) => {
     try {
         if(rateLimits.canSendMessage(req.body.uuid)){
-            //Drawings.add(req);
+            Drawings.add(req);
             res.json({message: "Save successful"});
         }
     } catch (error) {
