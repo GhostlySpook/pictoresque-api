@@ -13,7 +13,7 @@ let message_length_limit = 128;
 let username_length_limit = 16;
 let avatar_length_limit = 811;
 let hexRegex = /^#[A-f0-9]{6}$/;
-let messages_in_memory = 20;
+let messages_in_memory = 50;
 
 async function getLastMessages(){
   try{
