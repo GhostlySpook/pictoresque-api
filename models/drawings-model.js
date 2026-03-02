@@ -143,10 +143,10 @@ const Drawings = {
 
         console.log("Validated");
 
-        let numStorage = await azureStorage.countImages();
-        console.log("Save items in storage:", numStorage)
+        //let numStorage = await azureStorage.countImages();
+        //console.log("Save items in storage:", numStorage)
 
-        if(req.file != undefined && numStorage <= 20){
+        if(req.file != undefined){
           message.path = await azureStorage.uploadImage(
               req.file.buffer,
               crypto.randomUUID() + ".jpeg"
