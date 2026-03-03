@@ -15,8 +15,16 @@ let avatar_length_limit = 811;
 let hexRegex = /^#[A-f0-9]{6}$/;
 let messages_in_memory = 50;
 
+const placeholderUsername = 'User :-)'
+
+let debug = false;
+
 async function getLastMessages(){
   try{
+    if(debug){
+      return
+    }
+
     //Get last 50 messages on wakeup
     await sql.connect(dbConfig);
     let received_message_list = await sql.query("SELECT * FROM (SELECT TOP " + messages_in_memory.toString() + " * FROM [dbo].[user-messages] ORDER BY message_id DESC) AS sub_query ORDER BY message_id ASC")
@@ -117,6 +125,10 @@ const Drawings = {
 
     async add(req){
       try{
+        if(debug){
+          return
+        }
+
         console.log("Starting saving drawing");
 
         let adding_width = null;
@@ -125,6 +137,11 @@ const Drawings = {
         if(req.body.width != null && req.body.height != null){
           adding_width = Number(req.body.width)
           adding_height = Number(req.body.height)
+        }
+
+        //Fill placeholder if username is empty
+        if(req.body.username == null || req.body.username == ''){
+          req.body.username = placeholderUsername;
         }
 
         message = {
