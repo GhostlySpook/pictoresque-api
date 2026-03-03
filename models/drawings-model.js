@@ -17,7 +17,7 @@ let messages_in_memory = 50;
 
 async function getLastMessages(){
   try{
-    //Get last 20 messages on wakeup
+    //Get last 50 messages on wakeup
     await sql.connect(dbConfig);
     let received_message_list = await sql.query("SELECT * FROM (SELECT TOP " + messages_in_memory.toString() + " * FROM [dbo].[user-messages] ORDER BY message_id DESC) AS sub_query ORDER BY message_id ASC")
     await sql.close();
@@ -87,7 +87,7 @@ async function getLastMessage(){
 
     lastKnownId = message_record.message_id;
     
-    if(message_list.length > 20){
+    if(message_list.length > messages_in_memory){
       message_list.shift();
     }
   }
